@@ -1,8 +1,8 @@
 package com.concrete.desafioandroid.features.repos.adapter
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
 import com.concrete.desafioandroid.R
 import com.concrete.desafioandroid.data.models.Repo
 import com.concrete.desafioandroid.utils.EMPTY_STRING

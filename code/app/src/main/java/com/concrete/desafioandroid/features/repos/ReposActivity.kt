@@ -2,8 +2,8 @@ package com.concrete.desafioandroid.features.repos
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.concrete.desafioandroid.R
 import com.concrete.desafioandroid.data.models.Repo
 import com.concrete.desafioandroid.features.base.BaseActivity
@@ -48,8 +48,8 @@ class ReposActivity : BaseActivity<ReposView>(), ReposView {
         }
         reposRecyclerView.adapter = adapter
         reposRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                val lastPosition = (recyclerView?.layoutManager as LinearLayoutManager)
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val lastPosition = (recyclerView.layoutManager as LinearLayoutManager)
                         .findLastVisibleItemPosition()
 
                 if (lastPosition >= reposList.size - OFFSET && !isLoading) {

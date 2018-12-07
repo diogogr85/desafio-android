@@ -3,8 +3,8 @@ package com.concrete.desafioandroid.features.pulls
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.concrete.desafioandroid.R
 import com.concrete.desafioandroid.data.models.PullRequest
 import com.concrete.desafioandroid.features.base.BaseActivity
