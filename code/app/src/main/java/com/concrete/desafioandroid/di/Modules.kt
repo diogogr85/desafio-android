@@ -9,6 +9,7 @@ import com.concrete.desafioandroid.features.pulls.PullsInteractor
 import com.concrete.desafioandroid.features.pulls.PullsPresenter
 import com.concrete.desafioandroid.features.repos.ReposPresenter
 import com.concrete.desafioandroid.features.repos.ReposInteractor
+import com.concrete.desafioandroid.viewmodel.PullsViewModel
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
@@ -37,4 +38,13 @@ val interactorModule = Kodein.Module("Interactor") {
 val presenterModule = Kodein.Module("Presenter") {
     bind<ReposPresenter>() with provider { ReposPresenter(instance()) }
     bind<PullsPresenter>() with provider { PullsPresenter(instance()) }
+}
+
+val viewModelModule = Kodein.Module("ViewModel") {
+//    bind<PullsViewModel>() with provider { PullsViewModel(instance()) }
+    bind<PullsViewModel>() with provider { PullsViewModel(instance()) }
+}
+
+val viewModelFactory = Kodein.Module("Factory") {
+    bind<PullsViewModelFactory>() with singleton { PullsViewModelFactory(instance()) }
 }

@@ -2,14 +2,17 @@ package com.concrete.desafioandroid.features.pulls
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concrete.desafioandroid.R
 import com.concrete.desafioandroid.data.models.PullRequest
 import com.concrete.desafioandroid.features.base.BaseActivity
 import com.concrete.desafioandroid.features.pulls.adapter.PullsAdapter
 import com.concrete.desafioandroid.utils.*
+import com.concrete.desafioandroid.viewmodel.PullsViewModel
 import kotlinx.android.synthetic.main.activity_pulls.*
 import kotlinx.android.synthetic.main.component_empty_view.*
 import org.kodein.di.Kodein
@@ -23,13 +26,18 @@ class PullsActivity: BaseActivity<PullsView>(), PullsView {
     override val layoutId: Int = R.layout.activity_pulls
     override val presenter: PullsPresenter by instance()
 
+    private val viewModelFactory: ViewModelProvider.Factory by instance()
+    private val viewModel: PullsViewModel by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(PullsViewModel::class.java)
+    }
+
     private lateinit var adapter: PullsAdapter
     private val pullsList = ArrayList<PullRequest>()
     private var openedIssues: Int = 0
     private var closedIssues: Int = 0
 
     override fun setPresenter() {
-        presenter.attachView(this)
+//        presenter.attachView(this)
     }
 
     override fun onCreate() {
@@ -39,38 +47,75 @@ class PullsActivity: BaseActivity<PullsView>(), PullsView {
 
         pullsRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
         pullsRecyclerView.setHasFixedSize(true)
-        adapter = PullsAdapter(pullsList, applicationContext
+        adapter = PullsAdapter(
+//                viewModel.getPullsRequests(
+//                        intent.getStringExtra(INTENT_EXTRA_PULL_URL),
+//                        !hasSavedInstances),
+                pullsList,
+                applicationContext
         ) {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.setData(Uri.parse(it.htmlUrl))
-            startActivity(intent);
+            startActivity(intent)
         }
         pullsRecyclerView.adapter = adapter
 
-        presenter.getPullsRequests(intent.getStringExtra(INTENT_EXTRA_PULL_URL), !hasSavedInstances)
+//        openedIssues = viewModel.openedIssues
+//        closedIssues = viewModel.closedIssues
+
+//        presenter.getPullsRequests(intent.getStringExtra(INTENT_EXTRA_PULL_URL), !hasSavedInstances)
+//        viewModel.pulls.o
+
+        val openedIssuesObserver = Observer<Int> { openedIssuesValue ->
+            openedIssues = openedIssuesValue
+            updateIssuesCounterUi()
+        }
+        viewModel.openedIssues.observe(this, openedIssuesObserver)
+
+        val closedIssuesObserver = Observer<Int> { openedIssuesValue ->
+            closedIssues = openedIssuesValue
+            updateIssuesCounterUi()
+        }
+        viewModel.closedIssues.observe(this, closedIssuesObserver)
+
+
+        val pullsListObserver = Observer<List<PullRequest>> {
+            reloadList(it)
+        }
+        viewModel.pulls.observe(this, pullsListObserver)
+
+        viewModel.getPullsRequests(intent.getStringExtra(INTENT_EXTRA_PULL_URL),!hasSavedInstances)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        outState?.putParcelableArrayList(EXTRA_LIST, pullsList)
-        outState?.putInt(EXTRA_OPENED_ISSUES_TEXT, openedIssues)
-        outState?.putInt(EXTRA_CLOSED_ISSUES_TEXT, closedIssues)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        super.onRestoreInstanceState(savedInstanceState)
-        reloadList(savedInstanceState?.getParcelableArrayList<PullRequest>(EXTRA_LIST)!!)
-        updateUi(savedInstanceState.getInt(EXTRA_OPENED_ISSUES_TEXT),
-                savedInstanceState.getInt(EXTRA_CLOSED_ISSUES_TEXT))
-    }
+//    override fun onSaveInstanceState(outState: Bundle?) {
+//        super.onSaveInstanceState(outState)
+//        outState?.putParcelableArrayList(EXTRA_LIST, pullsList)
+//        outState?.putInt(EXTRA_OPENED_ISSUES_TEXT, openedIssues)
+//        outState?.putInt(EXTRA_CLOSED_ISSUES_TEXT, closedIssues)
+//    }
+//
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//        reloadList(savedInstanceState?.getParcelableArrayList<PullRequest>(EXTRA_LIST)!!)
+//        updateUi(savedInstanceState.getInt(EXTRA_OPENED_ISSUES_TEXT),
+//                savedInstanceState.getInt(EXTRA_CLOSED_ISSUES_TEXT))
+//    }
 
     override fun onGetPullsRequests(pulls: List<PullRequest>) {
-        reloadList(pulls)
+//        reloadList(pulls)
     }
 
     override fun updateUi(opened: Int, closed: Int) {
         openedIssues = opened
         closedIssues = closed
+
+        pullsOpenedTextView.text = getString(R.string.pull_requests_header_opened_text, openedIssues)
+        pullsClosedTextView.text = getString(R.string.pull_requests_header_closed_text, closedIssues)
+    }
+
+    fun updateIssuesCounterUi() {
+//        openedIssues = opened
+//        closedIssues = closed
 
         pullsOpenedTextView.text = getString(R.string.pull_requests_header_opened_text, openedIssues)
         pullsClosedTextView.text = getString(R.string.pull_requests_header_closed_text, closedIssues)

@@ -16,6 +16,8 @@ class DesafioApplication: Application(), KodeinAware {
         import(repositoryModule)
         import(interactorModule)
         import(presenterModule)
+        import(viewModelModule)
+        import(viewModelFactory)
     }
 
 }

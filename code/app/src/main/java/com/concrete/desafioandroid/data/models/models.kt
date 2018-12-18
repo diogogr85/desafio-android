@@ -58,3 +58,8 @@ data class PullRequest(
         @SerializedName("html_url")
         val htmlUrl: String
 ): Parcelable
+
+//Live models
+data class LivePullRequest(
+        val pullRequests: ArrayList<PullRequest> = ArrayList()
+)

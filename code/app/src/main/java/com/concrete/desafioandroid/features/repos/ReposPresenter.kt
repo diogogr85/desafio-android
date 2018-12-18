@@ -22,7 +22,7 @@ class ReposPresenter(private val interactor: ReposInteractor): BasePresenter<Rep
             view?.showProgress(showLoadAtFirstUse)
             val disposable = interactor.getReposList(assembleQueries()) {
                 view?.onGetReposListSuccess(it)
-                fetchDetail(it)
+//                fetchDetail(it)
                 view?.loading(false)
                 showLoadAtFirstUse = false
                 view?.showProgress(showLoadAtFirstUse)
